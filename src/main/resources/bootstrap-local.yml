@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.10.227:8848
+
+        watch:
+          enabled: false
+      config:
+        server-addr: 192.168.10.227:8848
+        file-extension: yaml
+
+    gateway:
+      discovery:
+        locator:
+          enabled: true

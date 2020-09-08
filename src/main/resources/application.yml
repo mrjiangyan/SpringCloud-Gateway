@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: com.touchbiz.apiGateway
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+
+server:
+  port: 9001
+
+
+#MybatisConfiguration
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  config: classpath:logback-spring.xml
+
+#feign 配置
+#feign:
+#  hystrix:
+#    enabled: true
+#  client:
+#    config:
+#      default:
+#        connectTimeout: 5000
+#        readTimeout: 15000
+#        loggerLevel: full
+#
+#
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy:  SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 3000
+
+

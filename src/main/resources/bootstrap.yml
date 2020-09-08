@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+        #namespace: 400386a2-2ee0-4c5b-b84e-146146a400e5
+        watch:
+          enabled: false
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+        #namespace: b6c45a92-c29c-435e-9fe3-7f5b9b3de152
+    gateway:
+      discovery:
+        locator:
+          enabled: true
