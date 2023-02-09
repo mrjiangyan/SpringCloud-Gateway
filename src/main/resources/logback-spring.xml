@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration status="warn" scan="true">
-    <springProfile name="!local">
-        <property name="logbasedir" value="/home/admin/logs/com.touchbiz.apiGateway"/>
-    </springProfile>
-    <springProfile name="local">
-        <property name="logbasedir" value="/opt/logs/com.touchbiz.apiGateway"/>
-    </springProfile>
 
+    <property name="logbasedir" value="/opt/logs/com.prime.ai.gateway"/>
+    <springProperty scope="context" name="app.name" source="spring.application.name"/>
+    <springProperty scope="context" name="profile" source="spring.profiles.active"/>
+    <property name="logStore" value="${app.name}"/>
     <property name="logPattern" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%thread] [%cyan(%X{traceId})] [%class{0}:%line]: %msg%n%rEx{full,
      java.lang.reflect.Method,
      sun.reflect,
@@ -153,6 +151,22 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="HTTP-LOG"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logbasedir}/http-log.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${logPattern}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logbasedir}/http-log-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <maxHistory>${maxHistory}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
     <appender name="ASYNC-ROOT" class="ch.qos.logback.classic.AsyncAppender">
         <includeCallerData>true</includeCallerData>
         <discardingThreshold>-1</discardingThreshold>
@@ -162,7 +176,12 @@
 
     <logger name="com.alibaba.nacos" level="error"/>
 
-    <springProfile name="local">
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+
+
+
+    <springProfile name="local|dev|uat">
+        <logger name="com.touchbiz" level="error"/>
         <root level="info">
             <!--Console日志是同步、阻塞的，推荐只在本地调试时使用，线上将该配置去掉-->
             <appender-ref ref="Console"/>
@@ -174,15 +193,25 @@
             <appender-ref ref="DEBUG-LOG"/>
         </root>
     </springProfile>
-    <springProfile name="uat|pat|pts">
-        <logger name="com.touchbiz" level="TRACE"/>
-        <root level="warn">
+    <springProfile name="preview|preview-v4|production|test|">
+        <logger name="com.touchbiz" level="error"/>
+        <root level="INFO">
+            <appender-ref ref="Console"/>
             <appender-ref ref="ASYNC-ROOT"/>
-            <appender-ref ref="TRACE-LOG"/>
             <appender-ref ref="INFO-LOG"/>
             <appender-ref ref="ERROR-LOG"/>
             <appender-ref ref="WARN-LOG"/>
-            <appender-ref ref="DEBUG-LOG"/>       <!--ERROR&WARN日志单独输出到一个文件-->
+        </root>
+    </springProfile>
+
+    <springProfile name="pat">
+        <logger name="com.touchbiz" level="error"/>
+        <root level="INFO">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="ASYNC-ROOT"/>
+            <appender-ref ref="INFO-LOG"/>
+            <appender-ref ref="ERROR-LOG"/>
+            <appender-ref ref="WARN-LOG"/>
         </root>
     </springProfile>
 </configuration>

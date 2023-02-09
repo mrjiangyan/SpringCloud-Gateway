@@ -2,16 +2,91 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
-
-        #namespace: 400386a2-2ee0-4c5b-b84e-146146a400e5
+        server-addr: nacos.ai-prime.tech:8848
         watch:
-          enabled: false
-      config:
-        server-addr: 127.0.0.1:8848
-        file-extension: yaml
-        #namespace: b6c45a92-c29c-435e-9fe3-7f5b9b3de152
-    gateway:
-      discovery:
-        locator:
           enabled: true
+      config:
+        server-addr: nacos.ai-prime.tech:8848
+        file-extension: yaml
+        enabled: true
+        shared-configs[0]:
+          data-id: common-biz.yaml
+          group: DEFAULT_GROUP
+          refresh: true  # 是否动态刷新，默认为false
+
+    #Sentinel配置
+    sentinel:
+      transport:
+        dashboard: sentinel.ai-prime.tech:8080
+      # 支持链路限流
+      web-context-unify: false
+      filter:
+        enabled: false
+      # 取消Sentinel控制台懒加载
+      eager: false
+      datasource:
+        #流控规则
+        flow:  # 指定数据源名称
+          # 指定nacos数据源
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            # 指定配置文件
+            dataId: ${spring.application.name}-flow-rules
+            # 指定分组
+            groupId: SENTINEL_GROUP
+            # 指定配置文件规则类型
+            rule-type: flow
+            # 指定配置文件数据格式
+            data-type: json
+        #降级规则
+        degrade:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            dataId: ${spring.application.name}-degrade-rules
+            groupId: SENTINEL_GROUP
+            rule-type: degrade
+            data-type: json
+        #系统规则
+        system:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            dataId: ${spring.application.name}-system-rules
+            groupId: SENTINEL_GROUP
+            rule-type: system
+            data-type: json
+        #授权规则
+        authority:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            dataId: ${spring.application.name}-authority-rules
+            groupId: SENTINEL_GROUP
+            rule-type: authority
+            data-type: json
+        #热点参数
+        param-flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            dataId: ${spring.application.name}-param-rules
+            groupId: SENTINEL_GROUP
+            rule-type: param-flow
+            data-type: json
+        #网关流控规则
+        gw-flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            dataId: ${spring.application.name}-flow-rules
+            groupId: SENTINEL_GROUP
+            rule-type: gw-flow
+            data-type: json
+        #API流控规则
+        gw-api-group:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            dataId: ${spring.application.name}-api-rules
+            groupId: SENTINEL_GROUP
+            rule-type: gw-api-group
+            data-type: json
+
+
+
+

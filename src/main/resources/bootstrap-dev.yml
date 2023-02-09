@@ -1,7 +1,10 @@
+
 spring:
   cloud:
     nacos:
       discovery:
-        namespace: jiangyan
+        namespace: dev
       config:
-        namespace: jiangyan
+        namespace: dev
+
+
