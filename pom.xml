@@ -170,7 +170,7 @@
         <dependency>
             <groupId>org.jeecgframework.boot</groupId>
             <artifactId>jeecg-boot-common</artifactId>
-            <version>3.4.3</version>
+            <version>3.4.4</version>
         </dependency>
 
     </dependencies>
